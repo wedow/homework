@@ -6,6 +6,8 @@ import (
 	"net/http"
 )
 
+var port string = ":8080"
+
 func init() {
 	log.SetFlags(log.LstdFlags | log.LUTC | log.Lshortfile)
 }
@@ -14,8 +16,8 @@ func main() {
 	http.Handle("/", http.FileServer(assetFS()))
 	http.HandleFunc("/echo", echo)
 
-	log.Println("Listening on :8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Println("Listening on", port)
+	log.Fatal(http.ListenAndServe(port, nil))
 }
 
 func echo(rw http.ResponseWriter, req *http.Request) {
