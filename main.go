@@ -4,6 +4,8 @@ import (
 	"io"
 	"log"
 	"net/http"
+
+	_ "github.com/wedow/homework/db"
 )
 
 var port string = ":8080"
