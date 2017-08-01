@@ -1,9 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Hello World</title>
+	<title>LoyaltyOne Homework</title>
 </head>
 <body>
-	<h1>Hello World</h1>
+	<h1>LoyaltyOne Homework</h1>
+	<form>
+		<label for="text-input">Input:</label>
+		<input type="text" name="text-input" autofocus>
+		<input type="submit" name="submit" value="Done">
+	</form>
+	<div>
+		<label>Output:</label>
+		<span></span>
+	</div>
+	<script type="text/javascript">
+		document.querySelector('form').onsubmit = function(e) {
+			e.preventDefault()
+
+			let body = document.querySelector('form > [name=text-input]').value
+			fetch('/echo',{
+				method: 'post',
+				body: body
+			}).then(resp => resp.text()).then(resp => {
+				document.querySelector('span').innerHTML = resp
+			})
+		}
+	</script>
 </body>
 </html>
