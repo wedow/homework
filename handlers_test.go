@@ -48,13 +48,15 @@ func TestEchoHandler(t *testing.T) {
 }
 
 func TestTextHandler(t *testing.T) {
+	user := "foobar"
+
 	// generate random request body
 	buf := RandStringBytes(8192)
-	text, _ := json.Marshal(map[string]interface{}{"Content": string(buf)})
+	text, _ := json.Marshal(map[string]interface{}{"content": string(buf), "username": user})
 	body := bytes.NewBuffer(text)
 
 	// create request
-	req, err := http.NewRequest("POST", "/echo", body)
+	req, err := http.NewRequest("POST", "/text", body)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -63,7 +65,7 @@ func TestTextHandler(t *testing.T) {
 	database, mock, err := sqlmock.New()
 	db.Use(database)
 	rows := sqlmock.NewRows([]string{"Id", "CreatedAt"}).AddRow(1, time.Now())
-	mock.ExpectQuery("INSERT INTO posts").WithArgs(string(buf)).WillReturnRows(rows)
+	mock.ExpectQuery("INSERT INTO posts").WithArgs(string(buf), user).WillReturnRows(rows)
 
 	// run request handler
 	rr := httptest.NewRecorder()
@@ -76,16 +78,16 @@ func TestTextHandler(t *testing.T) {
 	var result map[string]interface{}
 	json.Unmarshal(rr.Body.Bytes(), &result)
 
-	if _, ok := result["Id"]; !ok {
+	if _, ok := result["id"]; !ok {
 		t.Errorf("text did not populate Id field")
 	}
 
-	if _, ok := result["CreatedAt"]; !ok {
+	if _, ok := result["created_at"]; !ok {
 		t.Errorf("text did not populate CreatedAt field")
 	}
 
 	expected := string(buf)
-	if body, ok := result["Content"]; !ok {
+	if body, ok := result["content"]; !ok {
 		t.Errorf("text did not populate Content field")
 	} else if body := body.(string); body != expected {
 		t.Errorf("text returned unexpected body: got %v bytes want %v bytes", len(body), len(expected))
