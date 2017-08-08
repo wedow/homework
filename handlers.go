@@ -23,6 +23,14 @@ func echoHandler(rw http.ResponseWriter, req *http.Request) {
 func textHandler(rw http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case "GET":
+		posts, err := db.GetPosts()
+		if err != nil {
+			rw.WriteHeader(http.StatusInternalServerError)
+			fmt.Fprint(rw, err.Error())
+			return
+		}
+
+		json.NewEncoder(rw).Encode(posts)
 	case "POST":
 		defer req.Body.Close()
 

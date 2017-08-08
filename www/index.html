@@ -2,29 +2,80 @@
 <html>
 <head>
 	<title>LoyaltyOne Homework</title>
+	<style type="text/css">
+		textarea {
+			display: block;
+		}
+
+		.content {
+			white-space: pre;
+			margin-top: 15px;
+		}
+	</style>
 </head>
 <body>
 	<h1>LoyaltyOne Homework</h1>
 	<form>
-		<label for="text-input">Input:</label>
-		<input type="text" name="text-input" autofocus>
-		<input type="submit" name="submit" value="Done">
+		<div>
+			<label for="username">User:</label>
+			<input type="text" name="username" autofocus>
+		</div>
+		<div>
+			<label for="text-input">Post Content:</label>
+			<textarea name="text-input"></textarea>
+		</div>
+		<input type="submit" name="submit">
 	</form>
 	<div>
-		<label>Output:</label>
-		<span></span>
+		<h2>Posts</h2>
+		<div id="posts"></div>
 	</div>
+
+	<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 	<script type="text/javascript">
+		document.body.onload = function() {
+			fetch('/text').then(resp => resp.text()).then(resp => {
+				let posts = JSON.parse(resp)
+				if (posts)
+					posts.forEach(post => renderPost(post))
+			})
+		}
+
 		document.querySelector('form').onsubmit = function(e) {
 			e.preventDefault()
 
-			let body = document.querySelector('form > [name=text-input]').value
-			fetch('/echo',{
+			let body = document.querySelector('form [name=text-input]')
+			let user = document.querySelector('form [name=username]')
+
+			let data = {
+				username: user.value,
+				content: body.value
+			}
+
+			fetch('/text',{
+				headers: new Headers({'Content-Type': 'application/json'}),
 				method: 'post',
-				body: body
+				body: JSON.stringify(data)
 			}).then(resp => resp.text()).then(resp => {
-				document.querySelector('span').innerHTML = resp
+				let post = JSON.parse(resp)
+				renderPost(post)
+				body.value = ''
 			})
+		}
+
+		function renderPost(post) {
+			let div = document.createElement('div')
+			let metadata = document.createElement('div')
+			let content = document.createElement('div')
+			let hr = document.createElement('hr')
+
+			metadata.append(' - ', post.username)
+			content.append(post.content)
+			content.className = "content"
+
+			div.append(content, metadata, hr)
+
+			document.querySelector('#posts').prepend(div)
 		}
 	</script>
 </body>
