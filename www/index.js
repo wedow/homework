@@ -8,16 +8,22 @@ document.body.onload = function() {
 
 document.querySelector('.editor').onsubmit = submitEditor
 
-function submitEditor(e) {
+function submitEditor(e, parent_id) {
 	e.preventDefault()
 
 	let body = e.currentTarget.querySelector('form [name=text-input]')
 	let user = e.currentTarget.querySelector('form [name=username]')
 
+	if (!user.value || !body.value)
+		return alert('Please fill both the User and Content fields')
+
 	let data = {
 		username: user.value,
 		content: body.value
 	}
+
+	if (parent_id)
+		data.parent_id = parent_id
 
 	fetch('/text',{
 		headers: new Headers({'Content-Type': 'application/json'}),
@@ -30,6 +36,8 @@ function submitEditor(e) {
 	})
 }
 
+var postStore = {}
+
 function renderPost(post) {
 	let div = document.createElement('div')
 	let metadata = document.createElement('div')
@@ -38,11 +46,17 @@ function renderPost(post) {
 
 	metadata.append(' - ', post.username, createReplyLink(post.id))
 	content.append(post.content)
-	content.className = "content"
+	content.className = 'content'
 
 	div.append(content, metadata, hr)
+	div.className = 'post'
 
-	document.querySelector('#posts').prepend(div)
+	postStore[post.id] = div
+	if (post.parent_id) {
+		postStore[post.parent_id].append(div)
+	} else {
+		document.querySelector('#posts').prepend(div)
+	}
 }
 
 function createReplyLink(id) {
@@ -61,7 +75,7 @@ function createReplyLink(id) {
 
 		editor.append(cancelButton)
 		editor.onsubmit = function(e) {
-			submitEditor(e)
+			submitEditor(e, id)
 			swapBackElements()
 		}
 
