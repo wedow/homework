@@ -65,7 +65,7 @@ func TestTextHandler(t *testing.T) {
 	database, mock, err := sqlmock.New()
 	db.Use(database)
 	rows := sqlmock.NewRows([]string{"Id", "CreatedAt"}).AddRow(1, time.Now())
-	mock.ExpectQuery("INSERT INTO posts").WithArgs(string(buf), user).WillReturnRows(rows)
+	mock.ExpectQuery("INSERT INTO posts").WithArgs(nil, string(buf), user).WillReturnRows(rows)
 
 	// run request handler
 	rr := httptest.NewRecorder()
@@ -79,16 +79,16 @@ func TestTextHandler(t *testing.T) {
 	json.Unmarshal(rr.Body.Bytes(), &result)
 
 	if _, ok := result["id"]; !ok {
-		t.Errorf("text did not populate Id field")
+		t.Errorf("text did not populate id field")
 	}
 
 	if _, ok := result["created_at"]; !ok {
-		t.Errorf("text did not populate CreatedAt field")
+		t.Errorf("text did not populate created_at field")
 	}
 
 	expected := string(buf)
 	if body, ok := result["content"]; !ok {
-		t.Errorf("text did not populate Content field")
+		t.Errorf("text did not populate content field")
 	} else if body := body.(string); body != expected {
 		t.Errorf("text returned unexpected body: got %v bytes want %v bytes", len(body), len(expected))
 	}
