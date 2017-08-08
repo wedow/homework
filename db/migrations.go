@@ -1,6 +1,7 @@
 package db
 
 import (
+	"flag"
 	"github.com/mattes/migrate"
 	_ "github.com/mattes/migrate/database/postgres"
 	"github.com/mattes/migrate/source/go-bindata"
@@ -9,6 +10,11 @@ import (
 )
 
 func init() {
+	// skip running migrations when running tests
+	if flag.Lookup("test.v") != nil {
+		return
+	}
+
 	// databaseURL := "postgres://ubuntu:@localhost:5433/homework?sslmode=disable"
 	// databaseURL := "postgres://localhost:5432/homework?sslmode=disable"
 	// wrap assets into Resource
