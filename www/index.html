@@ -15,7 +15,7 @@
 </head>
 <body>
 	<h1>LoyaltyOne Homework</h1>
-	<form>
+	<form class="editor">
 		<div>
 			<label for="username">User:</label>
 			<input type="text" name="username" autofocus>
@@ -32,51 +32,6 @@
 	</div>
 
 	<script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
-	<script type="text/javascript">
-		document.body.onload = function() {
-			fetch('/text').then(resp => resp.text()).then(resp => {
-				let posts = JSON.parse(resp)
-				if (posts)
-					posts.forEach(post => renderPost(post))
-			})
-		}
-
-		document.querySelector('form').onsubmit = function(e) {
-			e.preventDefault()
-
-			let body = document.querySelector('form [name=text-input]')
-			let user = document.querySelector('form [name=username]')
-
-			let data = {
-				username: user.value,
-				content: body.value
-			}
-
-			fetch('/text',{
-				headers: new Headers({'Content-Type': 'application/json'}),
-				method: 'post',
-				body: JSON.stringify(data)
-			}).then(resp => resp.text()).then(resp => {
-				let post = JSON.parse(resp)
-				renderPost(post)
-				body.value = ''
-			})
-		}
-
-		function renderPost(post) {
-			let div = document.createElement('div')
-			let metadata = document.createElement('div')
-			let content = document.createElement('div')
-			let hr = document.createElement('hr')
-
-			metadata.append(' - ', post.username)
-			content.append(post.content)
-			content.className = "content"
-
-			div.append(content, metadata, hr)
-
-			document.querySelector('#posts').prepend(div)
-		}
-	</script>
+	<script src="index.js" type="text/javascript"></script>
 </body>
 </html>
