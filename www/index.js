@@ -46,7 +46,15 @@ function renderPost(post) {
 	let content = document.createElement('div')
 	let hr = document.createElement('hr')
 
-	metadata.append(' - ', post.username, createReplyLink(post.id))
+	let timestamp = ' (' + moment(post.created_at).fromNow() + ')'
+	let location = ' in ' + post.city + ' (lat: ' + post.latitude + ' long: ' + post.longitude + ') Temperature: ' + post.temperature + '°C'
+	metadata.append(
+		' ~ ',
+		post.username,
+		timestamp,
+		location,
+		createReplyLink(post.id)
+	)
 	content.append(post.content)
 	content.className = 'content'
 
