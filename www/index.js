@@ -13,13 +13,15 @@ function submitEditor(e, parent_id) {
 
 	let body = e.currentTarget.querySelector('form [name=text-input]')
 	let user = e.currentTarget.querySelector('form [name=username]')
+	let city = e.currentTarget.querySelector('form [name=city]')
 
-	if (!user.value || !body.value)
-		return alert('Please fill both the User and Content fields')
+	if (!user.value || !body.value || !city.value)
+		return alert('Please fill in the User, City, and Content fields')
 
 	let data = {
 		username: user.value,
-		content: body.value
+		content: body.value,
+		city: city.value
 	}
 
 	if (parent_id)
@@ -67,7 +69,7 @@ function createReplyLink(id) {
 		let original = document.querySelector('.editor')
 		let editor = original.cloneNode(true)
 
-		let swapBackElements = () => editor.parentNode.replaceChild(link, editor)
+		let swapBackElements = () => editor.replaceWith(link)
 
 		let cancelButton = document.createElement('button')
 		cancelButton.append('Cancel')
@@ -79,7 +81,8 @@ function createReplyLink(id) {
 			swapBackElements()
 		}
 
-		link.parentNode.replaceChild(editor, link)
+		link.replaceWith(editor)
+		editor.querySelector('[name=username]').focus()
 	}
 
 	return link

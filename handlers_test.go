@@ -65,7 +65,7 @@ func TestTextHandler(t *testing.T) {
 	database, mock, err := sqlmock.New()
 	db.Use(database)
 	rows := sqlmock.NewRows([]string{"Id", "CreatedAt"}).AddRow(1, time.Now())
-	mock.ExpectQuery("INSERT INTO posts").WithArgs(nil, string(buf), user).WillReturnRows(rows)
+	mock.ExpectQuery("INSERT INTO posts").WillReturnRows(rows)
 
 	// run request handler
 	rr := httptest.NewRecorder()

@@ -1,0 +1,5 @@
+ALTER TABLE posts 
+	DROP COLUMN city,
+	DROP COLUMN lat,
+	DROP COLUMN long,
+	DROP COLUMN temp;
