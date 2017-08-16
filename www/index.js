@@ -41,13 +41,9 @@ function submitEditor(e, parent_id) {
 var postStore = {}
 
 function renderPost(post) {
-	let div = document.createElement('div')
-	let metadata = document.createElement('div')
-	let content = document.createElement('div')
-	let hr = document.createElement('hr')
-
 	let timestamp = ' (' + moment(post.created_at).fromNow() + ')'
 	let location = ' in ' + post.city + ' (lat: ' + post.latitude + ' long: ' + post.longitude + ') Temperature: ' + post.temperature + '°C'
+	let metadata = document.createElement('div')
 	metadata.append(
 		' ~ ',
 		post.username,
@@ -55,9 +51,14 @@ function renderPost(post) {
 		location,
 		createReplyLink(post.id)
 	)
+
+	let content = document.createElement('div')
 	content.append(post.content)
 	content.className = 'content'
 
+	let hr = document.createElement('hr')
+
+	let div = document.createElement('div')
 	div.append(content, metadata, hr)
 	div.className = 'post'
 
@@ -74,19 +75,16 @@ function createReplyLink(id) {
 	link.append('Reply')
 	link.onclick = function(e) {
 		e.preventDefault()
-		let original = document.querySelector('.editor')
-		let editor = original.cloneNode(true)
-
-		let swapBackElements = () => editor.replaceWith(link)
+		let editor = document.querySelector('.editor').cloneNode(true)
 
 		let cancelButton = document.createElement('button')
 		cancelButton.append('Cancel')
-		cancelButton.onclick = swapBackElements
+		cancelButton.onclick = () => editor.replaceWith(link)
 
 		editor.append(cancelButton)
 		editor.onsubmit = function(e) {
 			submitEditor(e, id)
-			swapBackElements()
+			editor.replaceWith(link)
 		}
 
 		link.replaceWith(editor)

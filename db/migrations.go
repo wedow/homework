@@ -15,8 +15,6 @@ func init() {
 		return
 	}
 
-	// databaseURL := "postgres://ubuntu:@localhost:5433/homework?sslmode=disable"
-	// databaseURL := "postgres://localhost:5432/homework?sslmode=disable"
 	// wrap assets into Resource
 	s := bindata.Resource(migrations.AssetNames(),
 		func(name string) ([]byte, error) {

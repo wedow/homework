@@ -64,7 +64,9 @@ func TestTextHandler(t *testing.T) {
 	// open mock database
 	database, mock, err := sqlmock.New()
 	db.Use(database)
-	rows := sqlmock.NewRows([]string{"Id", "CreatedAt"}).AddRow(1, time.Now())
+
+	id, timestamp := 15, time.Now()
+	rows := sqlmock.NewRows([]string{"Id", "CreatedAt"}).AddRow(id, timestamp)
 	mock.ExpectQuery("INSERT INTO posts").WillReturnRows(rows)
 
 	// run request handler
@@ -78,12 +80,21 @@ func TestTextHandler(t *testing.T) {
 	var result map[string]interface{}
 	json.Unmarshal(rr.Body.Bytes(), &result)
 
-	if _, ok := result["id"]; !ok {
+	if resultId, ok := result["id"]; !ok {
 		t.Errorf("text did not populate id field")
+	} else if resultId.(float64) != float64(id) {
+		t.Errorf("text returned wrong id value: got %v, expected %v", resultId, id)
 	}
-
-	if _, ok := result["created_at"]; !ok {
+	t.Log(result["created_at"])
+	if resultTimestamp, ok := result["created_at"]; !ok {
 		t.Errorf("text did not populate created_at field")
+	} else if timestring, ok := resultTimestamp.(string); ok {
+		ts, err := time.Parse(time.RFC3339Nano, timestring)
+		if err != nil {
+			t.Errorf("invalid created_at format - %s", err)
+		} else if !ts.Equal(timestamp) {
+			t.Errorf("text returned wrong created_at value: got %v, expected %v", ts, timestamp)
+		}
 	}
 
 	expected := string(buf)
