@@ -46,10 +46,14 @@ func GetPosts() ([]Post, error) {
 
 func (p *Post) Save() error {
 	if p.Lat.IsZero() || p.Long.IsZero() {
-		p.UpdateCoordinates()
+		if err := p.UpdateCoordinates(); err != nil {
+			return err
+		}
 	}
 	if p.Temp.IsZero() {
-		p.UpdateWeather()
+		if err := p.UpdateWeather(); err != nil {
+			return err
+		}
 	}
 
 	query := "INSERT INTO posts (parent_id, content, username, city, lat, long, temp) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, created_at"
