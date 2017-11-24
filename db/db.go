@@ -18,7 +18,7 @@ func init() {
 
 	var err error
 
-	db, err = sql.Open("postgres", "dbname=homework sslmode=disable")
+	db, err = sql.Open("postgres", "user=postgres password=password dbname=postgres sslmode=disable")
 	if err != nil {
 		log.Fatalln(err)
 	}

@@ -22,7 +22,7 @@ func init() {
 		})
 
 	d, err := bindata.WithInstance(s)
-	m, err := migrate.NewWithSourceInstance("go-bindata", d, "postgres://localhost:5432/homework?sslmode=disable")
+	m, err := migrate.NewWithSourceInstance("go-bindata", d, "postgres://postgres:password@localhost:5432/postgres?sslmode=disable")
 	if err != nil {
 		log.Printf("[ERR] Failed to initialize database migrations: %s", err)
 	} else {

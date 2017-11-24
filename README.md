@@ -40,11 +40,21 @@ To support threaded conversations, this endpoint supports an optional `parent_id
 }
 ```
 
-## Building
+## Setup
 
 First, install the Go tool chain and add `$GOPATH/bin` to your `$PATH`
 
-Then execute the following to install dependencies and utilities
+Postgres is required. Run the following to run a local instance with required configuration:
+
+```bash
+docker run --name homework-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:9-alpine
+```
+
+This project is `go get`able. To install and run it, simply run `go get github.com/wedow/homework && homework`
+
+## Building
+
+Execute the following to install dependencies and utilities
 
 ```
 go get github.com/jteeuwen/go-bindata/...
