@@ -10,19 +10,15 @@ document.querySelector('.editor').onsubmit = submitEditor
 function submitEditor (e, parentId) {
   e.preventDefault()
 
-  let body = e.currentTarget.querySelector('form [name=text-input]')
-  let user = e.currentTarget.querySelector('form [name=username]')
-  let city = e.currentTarget.querySelector('form [name=city]')
+  let content = e.currentTarget.querySelector('form [name=text-input]').value
+  let username = e.currentTarget.querySelector('form [name=username]').value
+  let city = e.currentTarget.querySelector('form [name=city]').value
 
-  if (!user.value || !body.value || !city.value) {
+  if (!username || !content || !city) {
     return window.alert('Please fill in the User, City, and Content fields')
   }
 
-  let data = {
-    username: user.value,
-    content: body.value,
-    city: city.value
-  }
+  let data = { username, content, city }
 
   if (parentId) { data.parent_id = parentId }
 
@@ -31,13 +27,12 @@ function submitEditor (e, parentId) {
     method: 'post',
     body: JSON.stringify(data)
   }).then(resp => resp.text()).then(resp => {
-    let post = JSON.parse(resp)
-    renderPost(post)
+    renderPost(JSON.parse(resp))
     body.value = ''
   })
 }
 
-var postStore = {}
+const postStore = {}
 
 function renderPost (post) {
   let timestamp = ' (' + window.moment(post.created_at).fromNow() + ')'
@@ -72,7 +67,7 @@ function renderPost (post) {
 function createReplyLink (id) {
   let link = document.createElement('a')
   link.append('Reply')
-  link.onclick = function (e) {
+  link.onclick = (e) => {
     e.preventDefault()
     let editor = document.querySelector('.editor').cloneNode(true)
 
@@ -81,7 +76,7 @@ function createReplyLink (id) {
     cancelButton.onclick = () => editor.replaceWith(link)
 
     editor.append(cancelButton)
-    editor.onsubmit = function (e) {
+    editor.onsubmit = (e) => {
       submitEditor(e, id)
       editor.replaceWith(link)
     }
